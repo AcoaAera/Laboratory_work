@@ -1,11 +1,23 @@
 #ifndef QSERVER_H
 #define QSERVER_H
 
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QDebug>
+#include <QObject>
 
-class QServer
+class QServer : public QObject
 {
+    Q_OBJECT
 public:
-    QServer();
+    explicit QServer(QObject *parent = nullptr);
+private:
+    QTcpServer *server;
+    QTcpSocket *socket;
+
+public slots:
+    void getNewConnection();
+    void getDisconnected();
 };
 
 #endif // QSERVER_H
