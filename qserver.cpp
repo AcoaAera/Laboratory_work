@@ -25,7 +25,7 @@ void QServer::getNewConnection(){
 
     static int N = 0;
 
-    QString response = HTTPHandle + QString::number(N++);
+    QString response = HTTPHandle + "<h1>" + QString::number(N++) + "</h1>";
 
     socket->write(response.toLatin1());
 
