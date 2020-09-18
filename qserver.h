@@ -10,10 +10,11 @@ class QServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit QServer(QObject *parent = nullptr);
+    explicit QServer(QString title = "", QObject *parent = nullptr);
 private:
     QTcpServer *server;
     QTcpSocket *socket;
+    QString title;
 
 public slots:
     void getNewConnection();

@@ -2,7 +2,7 @@
 
 static QString HTTPHandle = "HTTP/1.1 200 OK\n\n";
 
-QServer::QServer(QObject *parent) : QObject(parent)
+QServer::QServer(QString title, QObject *parent) : QObject(parent)
 {
     server = new QTcpServer(this);
 
@@ -14,18 +14,18 @@ QServer::QServer(QObject *parent) : QObject(parent)
         qDebug() << "Server not starting " << server->errorString();
     }
 
-
+    this->title = title;
 }
 
 
 void QServer::getNewConnection(){
     socket = server->nextPendingConnection();
 
-    qWarning() << "new connection";
+   // qWarning() << "new connection";
 
     static int N = 0;
 
-    QString response = HTTPHandle + "<h1>" + QString::number(N++) + "</h1>";
+    QString response = HTTPHandle + "<h1>" + this->title + ": " + QString::number(N++) + "</h1>";
 
     socket->write(response.toLatin1());
 
@@ -33,7 +33,7 @@ void QServer::getNewConnection(){
 }
 
 void QServer::getDisconnected(){
-    qDebug() << "disconnect";
+    //qDebug() << "disconnect";
     socket->close();
 }
 
