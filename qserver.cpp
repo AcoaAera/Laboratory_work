@@ -21,19 +21,16 @@ QServer::QServer(QString title, QObject *parent) : QObject(parent)
 void QServer::getNewConnection(){
     socket = server->nextPendingConnection();
 
-   // qWarning() << "new connection";
-
     static int N = 0;
 
     QString response = HTTPHandle + "<h1>" + this->title + ": " + QString::number(N++) + "</h1>";
 
     socket->write(response.toLatin1());
 
-    connect(socket, &QTcpSocket::disconnected, this, &QServer::getDisconnected);
+    connect(socket, &QTcpSocket::readyRead, this, &QServer::getDisconnected);
 }
 
 void QServer::getDisconnected(){
-    //qDebug() << "disconnect";
     socket->close();
 }
 

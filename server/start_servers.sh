@@ -1,0 +1,5 @@
+docker run -d --rm -p 8000:8000 server_balance -title "Server 1"
+docker run -d --rm -p 8001:8000 server_balance -title "Server 2"
+docker run -d --rm -p 8002:8000 server_balance -title "Server 3"
+docker run -d --rm -p 8003:8000 server_balance -title "Server 4"
+docker run -d --rm -p 8004:8000 server_balance -title "Server 5"
