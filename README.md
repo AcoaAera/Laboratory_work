@@ -66,6 +66,42 @@
 
 ## ---------------------------------------------------------------------
 
+# Lab_03 Kafka | NodeJS
+
+#### Запуск и тестирование проводилось на Xubuntu 20.04
+
+### Для начала необходимо было установить и запустить Kafka сервер:
+
+    sudo systemctl start zookeeper
+    sudo systemctl start kafka
+
+#### Далее необходимо было найти библиотеку клиент для работы с Kafka. Была выбрана kafka-node:
+    npm install kafka-node
+    
+#### Далее создаем два скрипта: producer.js и consumer.js. Первый будет генерировать сообщения и посылать их в очередь, второй будет считывать сообщения из очереди
+
+### Producer каждые 500мс посылает сообщения в очередь:
+    setInterval(function() {
+    payloads = [
+      { topic: "count", messages: `${count}`, partition: 0 }
+    ];
+
+    producer.send(payloads, function(err, data) {
+      console.log(data);
+      count += 1;
+    });
+    }, 500);
+    });
+
+### Consumer считывает сообщения из очереди и выводит их в консоль:
+    consumer.on("message", function(message) {
+    console.log(message);
+    });
+
+![](/Lab_03_Kafka/images/1.png)
+
+## ---------------------------------------------------------------------
+
 # Lab_04 PostegreSQL | Partitioning
 
 
@@ -160,4 +196,3 @@
 
 
 
-    
