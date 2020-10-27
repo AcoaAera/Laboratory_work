@@ -1,10 +1,8 @@
 var kafka = require("kafka-node"),
   Consumer = kafka.Consumer,
-  client = new kafka.KafkaClient({requestTimeout:1000}),
+  client = new kafka.KafkaClient(),
   consumer = new Consumer(client, [{ topic: "count", partition: 0}], {
-    autoCommit: false,
-    autoCommitIntervalMs: 10000
-  });
+    autoCommit: false});
 
 consumer.on("message", function(message) {
   console.log(message);
