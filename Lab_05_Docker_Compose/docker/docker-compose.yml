@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+ server1:
+    image: server
+    ports:
+    - "8000:8000"
+ server2:
+    image: server
+    ports:
+    - "8001:8000"
+ server3:
+   image: server
+   ports:
+   - "8002:8000"
+ server4:
+   image: server
+   ports:
+   - "8003:8000"
+ server5:
+   image: server
+   ports:
+   - "8004:8000"
+ server6:
+   image: server
+   ports:
+   - "8005:8000"
+
