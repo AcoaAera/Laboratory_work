@@ -1,0 +1,182 @@
+<script type="text/javascript" src = "https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<div class="example-2">
+	<div class="form-group">
+		<input type="file" name="file" id="file" class="input-file">
+		<label for="file" class="btn btn-tertiary js-labelFile">
+			<i class="icon fa fa-check"></i>
+			<span class="js-fileName">Загрузить файл</span>
+		</label>
+	</div>
+</div>
+
+
+<div id = 'main'>
+</div>
+
+<canvas id = "ca"></canvas>
+
+<script type="text/javascript">
+	var c,w,h,canvas;
+	var files; 
+	var origW,origH;
+
+	window.onload = function(){
+		canvas = document.getElementById('ca');
+		c = canvas.getContext('2d');
+	}
+
+
+	$("input[type=file]").on('change', function(){
+		files = this.files;
+
+		var formData = new FormData();
+		var imagefile = document.querySelector('#file');
+
+		let reader = new FileReader();
+		reader.readAsDataURL(files[0]);
+
+		reader.onload = function() {
+			$("#resultImg").remove();
+
+			$("#main").append("<img id = 'resultImg' src="+reader.result+"></img>");
+
+			origW = $("#resultImg").width();
+			origH = $("#resultImg").height();
+
+			$("#resultImg").css("max-width","1000px");		
+			$("#resultImg").css("top","30px");		
+
+			var docWidth = $("#main").width();
+			var imgWidth = $("#resultImg").width();
+
+			$("#resultImg").css({left : docWidth / 2 - imgWidth / 2});	
+	
+			var img_left = $("#resultImg").offset().left;
+			var img_top = $("#resultImg").offset().top;
+
+			$("#ca").css({"left":img_left});
+			$("#ca").css({"top":img_top});
+
+			document.getElementById('ca').width = $("#resultImg").width();
+			document.getElementById('ca').height = $("#resultImg").height();
+
+			formData.append("image", imagefile.files[0]);
+			//console.log(imagefile.files[0]);
+
+			axios.post('upload', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			}) .then(function (response) {
+				console.log(response.data.body);
+				var res = response.data.body;
+
+				c.strokeStyle = "red";
+
+				var mas = [res.multiobject_labels,res.pedestrian_labels,res.object_labels];
+
+
+
+				for(var k = 0; k < mas.length; ++k){
+					for(var i = 0; i < mas[k].length; ++i){
+						if(mas[k][i].labels != undefined){
+							for(var j = 0; j < mas[k][i].labels.length; ++j){						
+								var coord = mas[k][i].labels[j].coord;
+								var name = mas[k][i].labels[j].rus;
+								draw(coord,name);
+								
+							}
+						}
+					}
+				}
+
+			});
+		};
+
+
+
+	});
+
+	function draw(coord, name){
+		//console.log(coord);
+
+
+		var scaleW = ($("#resultImg").width() / origW);
+		var scaleH = ($("#resultImg").height() / origH);
+
+
+		var width = coord[2]-coord[0];
+		var height = coord[3] - coord[1];
+
+
+		c.strokeRect(coord[0] * scaleW,coord[1] * scaleH,width * scaleW,height * scaleH);
+		c.fillStyle = "black";
+		c.fillRect(coord[0] * scaleW -1, coord[1] * scaleH - 20, width+1,20);
+		c.fillStyle = "white";
+		c.font = "18px Tahoma";
+		c.fillText(name,coord[0] * scaleW +2, coord[1] * scaleH - 3);
+		console.log(name);
+	}
+
+
+</script>
+
+<style type="text/css">
+	.example-2 .btn-tertiary{color:#555;padding:0;line-height:40px;width:300px;margin:auto;display:block;border:2px solid #555}
+	.example-2 .btn-tertiary:hover,.example-2 .btn-tertiary:focus{color:#888;border-color:#888}
+	.example-2 .input-file{width:.1px;height:.1px;opacity:0;overflow:hidden;position:absolute;z-index:-1}
+	.example-2 .input-file + .js-labelFile{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 10px;cursor:pointer}
+	.example-2 .input-file + .js-labelFile .icon:before{content:"\f093"}
+	.example-2 .input-file + .js-labelFile.has-file .icon:before{content:"\f00c";color:#5AAC7B}
+
+	#ca{
+		position: absolute;
+		z-index: 999;
+	}
+
+	#upload{
+		width: 40px;
+		height: 40px;
+
+		margin: 0 auto;
+		text-align: center;
+		font-family: Tahoma;
+		font-size: 40px;
+		line-height: 40px;
+		border:1px solid #000;
+		border-radius: 2px;	
+		font-weight: bold;
+		color:white;
+		border: 5px solid #F00;
+	}
+
+	#upload:hover{
+		cursor: pointer;
+	}
+
+	#upload:active{
+		background: rgb(47,51,150);
+		background: linear-gradient(0deg, rgba(150,215,242,1) 0%, rgba(47,51,150,1) 100%);
+	}
+
+
+	#main{
+		width:100%;
+		margin: 0 auto;
+		position: relative;
+	}
+
+	#resultImg{
+		position: absolute;
+	}
+
+
+
+	*{
+		user-select: none;
+	}
+</style>
