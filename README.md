@@ -306,3 +306,47 @@
 ![](/Lab_07_Vision/images/1.png)
 ![](/Lab_07_Vision/images/2.png)
 ![](/Lab_07_Vision/images/3.png)
+
+## ---------------------------------------------------------------------
+
+# Lab_08 Kubernetes | Minikube
+
+### Запуск и тестирование проводилось на Xubuntu 20.04
+
+### Для начала необходимо установить minikube и kubectl:
+    $ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.20.0/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+    $ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+    
+### Запускаем minikube командой minikube start:
+
+    Starting local Kubernetes v1.6.4 cluster...
+    Starting VM...
+    Downloading Minikube ISO
+    90.95 MB / 90.95 MB [==============================================] 100.00% 0s
+    Moving files into cluster...
+    Setting up certs...
+    Starting cluster components...
+    Connecting to cluster...
+    Setting up kubeconfig...
+    Kubectl is now configured to use the cluster.
+
+### Далее мы создаем переменные окружения Docker для Minikube с помощью команды minikube docker-env:
+    $ eval $(minikube docker-env)
+    
+### Пишем простой echo сервер на NodeJS уоторый возвращает счетчик и Dockerfile для сборки
+### Собираем образ:
+    docker build -t test:v1 .
+### Теперь мы можем разместить под "test" в локальный кластер Kubernetes с помощью kubectl:
+    kubectl run test --image=test:v1 --port=8080
+### Необходимо присвоить сервису внешний IP и порт, чтобы получить к нему доступ с помощью curl:
+     kubectl expose deployment test --type=NodePort
+### Проверяем командой:
+    curl $(minikube service test --url)
+### Как результат в терминал возвращается счетчик:
+![](/Lab_08_Minikube/images/1.png)
+### Следующей командой смотрим адрес и порт
+    minikube service test --url
+    $ http://192.168.99.108:30881
+### Так же проверка в браузере:
+![](/Lab_08_Minikube/images/2.png)   
+    
